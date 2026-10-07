@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genshin Impact — Recipe Book</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'gi-gold':    '#c8a951',
+            'gi-gold2':   '#e8c96b',
+            'gi-blue':    '#4a90d9',
+            'gi-dark':    '#0d1117',
+            'gi-darker':  '#080c10',
+            'gi-panel':   '#111827',
+            'gi-card':    '#161f2e',
+            'gi-border':  '#2a3a50',
+            'gi-text':    '#d4c5a0',
+            'gi-muted':   '#8a9bb0',
+            'star1':      '#9e9e9e',
+            'star2':      '#75b09c',
+            'star3':      '#5b8dd9',
+            'star4':      '#a855f7',
+            'star5':      '#f59e0b',
+            /* regions */
+            'mondstadt': '#6ab4c4',
+            'liyue':     '#e8a84a',
+            'inazuma':   '#c084fc',
+            'sumeru':    '#4ade80',
+            'fontaine':  '#60a5fa',
+            'natlan':    '#f97316',
+            'snezhnaya': '#93c5fd',
+          },
+          fontFamily: {
+            cinzel:   ['Cinzel', 'serif'],
+            crimson:  ['Crimson Text', 'serif'],
+          },
+          animation: {
+            'float':       'float 6s ease-in-out infinite',
+            'float2':      'float 8s ease-in-out infinite 2s',
+            'float3':      'float 7s ease-in-out infinite 4s',
+            'shimmer':     'shimmer 3s linear infinite',
+            'sparkle':     'sparkle 2s ease-in-out infinite',
+            'glow-pulse':  'glow-pulse 2s ease-in-out infinite',
+            'slide-up':    'slide-up 0.5s ease-out',
+            'fade-in':     'fade-in 0.4s ease-out',
+            'spin-slow':   'spin 20s linear infinite',
+            'twinkle':     'twinkle 3s ease-in-out infinite',
+            'particle':    'particle 8s linear infinite',
+          },
+          keyframes: {
+            float:        { '0%,100%': {transform:'translateY(0)'}, '50%': {transform:'translateY(-18px)'} },
+            shimmer:      { '0%': {backgroundPosition:'-200% 0'}, '100%': {backgroundPosition:'200% 0'} },
+            sparkle:      { '0%,100%': {opacity:'0.2',transform:'scale(0.8)'}, '50%': {opacity:'1',transform:'scale(1.2)'} },
+            'glow-pulse':  { '0%,100%': {boxShadow:'0 0 10px #c8a951, 0 0 20px #c8a95140'}, '50%': {boxShadow:'0 0 20px #c8a951, 0 0 40px #c8a95180, 0 0 60px #c8a95140'} },
+            'slide-up':    { from: {opacity:'0',transform:'translateY(30px)'}, to: {opacity:'1',transform:'translateY(0)'} },
+            'fade-in':     { from: {opacity:'0'}, to: {opacity:'1'} },
+            twinkle:       { '0%,100%': {opacity:'0.1'}, '50%': {opacity:'0.8'} },
+            particle:      { '0%': {transform:'translateY(100vh) rotate(0deg)',opacity:'0'}, '10%': {opacity:'0.6'}, '90%': {opacity:'0.3'}, '100%': {transform:'translateY(-10vh) rotate(720deg)',opacity:'0'} },
+          },
+          backgroundImage: {
+            'hero-gradient':   'radial-gradient(ellipse at 50% 0%, #1a2a4a 0%, #0d1117 60%, #080c10 100%)',
+            'card-gradient':   'linear-gradient(135deg, #161f2e 0%, #1a2535 100%)',
+            'gold-shimmer':    'linear-gradient(90deg, transparent 0%, #c8a95140 50%, transparent 100%)',
+            'modal-bg':        'radial-gradient(ellipse at center, #1a2a4a 0%, #0d1117 100%)',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #080c10;
+      color: #d4c5a0;
+      font-family: 'Crimson Text', serif;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #c8a951; border-radius: 4px; }
+
+    .stars-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse at 50% 0%, #1a2a4a 0%, #0d1117 40%, #080c10 100%);
+    }
+    .star {
+      position: absolute; border-radius: 50%;
+      background: #fff; animation: twinkle var(--dur, 3s) ease-in-out infinite;
+      animation-delay: var(--del, 0s);
+    }
+
+    .particle {
+      position: fixed; pointer-events: none; z-index: 1;
+      border-radius: 50%;
+      animation: particle var(--dur, 8s) linear infinite;
+      animation-delay: var(--del, 0s);
+    }
+
+    .ornament-line {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .ornament-line::before, .ornament-line::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, #c8a951, transparent);
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(135deg, #e8c96b 0%, #c8a951 40%, #f0d878 70%, #c8a951 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 20px #c8a95160);
+    }
+
+    .nav-glass {
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(200,169,81,0.2);
+    }
+
+    .filter-btn {
+      transition: all 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .filter-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(200,169,81,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .filter-btn:hover::after { transform: translateX(100%); }
+    .filter-btn.active {
+      background: linear-gradient(135deg, #c8a951, #e8c96b) !important;
+      color: #0d1117 !important;
+      box-shadow: 0 0 15px #c8a95160, 0 0 30px #c8a95130;
+    }
+
+    .recipe-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative; overflow: hidden;
+    }
+    .recipe-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(200,169,81,0.05), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .recipe-card:hover::before { opacity: 1; }
+    .recipe-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(200,169,81,0.2);
+    }
+    .recipe-card .card-img-wrap {
+      position: relative; overflow: hidden;
+    }
+    .recipe-card .card-img-wrap img {
+      transition: transform 0.5s ease;
+    }
+    .recipe-card:hover .card-img-wrap img { transform: scale(1.1); }
+    .recipe-card .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,17,23,0.9) 0%, transparent 60%);
+    }
+
+    .rarity-1 { border-top: 3px solid #9e9e9e; }
+    .rarity-2 { border-top: 3px solid #75b09c; }
+    .rarity-3 { border-top: 3px solid #5b8dd9; }
+    .rarity-4 { border-top: 3px solid #a855f7; }
+    .rarity-5 { border-top: 3px solid #f59e0b; }
+
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; animation: fade-in 0.3s ease; }
+    .modal-content {
+      background: radial-gradient(ellipse at top, #1a2a4a 0%, #0d1117 60%);
+      border: 1px solid rgba(200,169,81,0.3);
+      border-radius: 16px;
+      max-width: 680px; width: 94%;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+      animation: slide-up 0.4s ease;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 40px rgba(200,169,81,0.1);
+    }
+    .modal-content::-webkit-scrollbar { width: 6px; }
+    .modal-content::-webkit-scrollbar-thumb { background: #c8a95160; border-radius: 3px; }
+
+    .region-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem; letter-spacing: 0.05em;
+    }
+
+    .search-input {
+      background: rgba(22,31,46,0.8);
+      border: 1px solid rgba(200,169,81,0.3);
+      transition: all 0.3s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #c8a951;
+      box-shadow: 0 0 0 3px rgba(200,169,81,0.15);
+    }
+
+    @keyframes empty-float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+    .empty-icon { animation: empty-float 3s ease-in-out infinite; }
+
+    .logo-ring {
+      animation: spin 25s linear infinite;
+    }
+
+    .tooltip { position: relative; }
+    .tooltip .tip {
+      position: absolute; bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%);
+      background: #1a2a4a; border: 1px solid #c8a95140;
+      color: #d4c5a0; font-size: 0.75rem;
+      padding: 4px 8px; border-radius: 6px;
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .tooltip:hover .tip { opacity: 1; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<div class="stars-bg" id="starsBg"></div>
+<div id="particlesContainer"></div>
+
+<nav class="nav-glass fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+      <div class="relative w-10 h-10 flex-shrink-0">
+        <svg class="logo-ring w-10 h-10 absolute inset-0" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="none" stroke="#c8a95140" stroke-width="1" stroke-dasharray="4 3"/>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 fill-gi-gold">
+            <path d="M12 2L8.5 8.5 2 9.27l5 4.87-1.18 6.88L12 17.77l6.18 3.25L17 14.14l5-4.87-6.5-.77L12 2z"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h1 class="font-cinzel text-gi-gold font-bold text-sm tracking-widest leading-none">GENSHIN</h1>
+        <p class="font-cinzel text-gi-muted text-xs tracking-widest leading-none">RECIPE BOOK</p>
+      </div>
+    </div>
+
+    <div class="hidden md:flex items-center gap-6">
+      <a href="#recipes" class="font-cinzel text-gi-muted hover:text-gi-gold transition-colors text-xs tracking-widest">RESEP</a>
+      <a href="#about" class="font-cinzel text-gi-muted hover:text-gi-gold transition-colors text-xs tracking-widest">TENTANG</a>
+    </div>
+
+    <div class="relative">
+      <input id="searchInput" type="text" placeholder="Cari resep..."
+        class="search-input font-crimson text-gi-text pl-9 pr-4 py-2 rounded-lg text-sm w-40 md:w-56"
+        oninput="applyFilters()"
+        onkeydown="if(event.key==='Enter'){applyFilters();document.getElementById('recipes').scrollIntoView({behavior:'smooth',block:'start'});this.blur();}" />
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gi-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<header class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16 overflow-hidden">
+
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div class="w-[600px] h-[600px] rounded-full border border-gi-gold opacity-5 absolute animate-spin-slow"></div>
+    <div class="w-[400px] h-[400px] rounded-full border border-gi-gold opacity-10 absolute" style="animation: spin 15s linear infinite reverse;"></div>
+    <div class="w-[800px] h-[800px] rounded-full border border-gi-gold opacity-[0.03] absolute" style="animation: spin 35s linear infinite;"></div>
+  </div>
+
+  <div class="absolute top-1/4 left-1/6 w-3 h-3 rounded-full bg-gi-blue opacity-60 animate-float blur-sm"></div>
+  <div class="absolute top-1/3 right-1/5 w-2 h-2 rounded-full bg-gi-gold opacity-60 animate-float2 blur-sm"></div>
+  <div class="absolute bottom-1/3 left-1/4 w-4 h-4 rounded-full bg-purple-500 opacity-40 animate-float3 blur-md"></div>
+  <div class="absolute bottom-1/4 right-1/3 w-2 h-2 rounded-full bg-green-400 opacity-50 animate-float blur-sm"></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto animate-slide-up">
+    <div class="ornament-line mb-6 max-w-xs mx-auto">
+      <span class="font-cinzel text-gi-gold text-xs tracking-[0.3em]">✦ SELAMAT DATANG ✦</span>
+    </div>
+
+    <h1 class="hero-title font-cinzel font-black text-5xl md:text-7xl lg:text-8xl leading-none mb-4">
+      GENSHIN<br/>
+      <span class="text-3xl md:text-5xl lg:text-6xl font-semibold">RECIPE BOOK</span>
+    </h1>
+
+    <div class="ornament-line my-6 max-w-md mx-auto">
+      <span class="font-cinzel text-gi-muted text-xs tracking-[0.2em]">TEYVAT CULINARY GUIDE</span>
+    </div>
+
+    <p class="font-crimson text-gi-text text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed mb-10 italic">
+      Temukan resep kuliner terbaik dari seluruh penjuru Teyvat. 
+      Dari Mondstadt hingga Natlan, panduan lengkap bahan &amp; cara memasak untuk menunjang petualanganmu.
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-8 mb-12">
+      <div class="text-center">
+        <div class="font-cinzel text-gi-gold font-bold text-3xl" id="statTotal">48</div>
+        <div class="font-cinzel text-gi-muted text-xs tracking-widest">RESEP</div>
+      </div>
+      <div class="w-px bg-gi-gold opacity-30"></div>
+      <div class="text-center">
+        <div class="font-cinzel text-gi-gold font-bold text-3xl">7</div>
+        <div class="font-cinzel text-gi-muted text-xs tracking-widest">REGION</div>
+      </div>
+      <div class="w-px bg-gi-gold opacity-30"></div>
+      <div class="text-center">
+        <div class="font-cinzel text-gi-gold font-bold text-3xl">5</div>
+        <div class="font-cinzel text-gi-muted text-xs tracking-widest">RARITAS</div>
+      </div>
+    </div>
+
+    <a href="#recipes"
+      class="inline-flex items-center gap-3 font-cinzel text-gi-dark font-bold text-sm tracking-widest
+             bg-gradient-to-r from-gi-gold to-gi-gold2 px-8 py-4 rounded-full
+             hover:shadow-[0_0_30px_rgba(200,169,81,0.6)] transition-all duration-300
+             hover:-translate-y-1 animate-glow-pulse">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/>
+      </svg>
+      JELAJAHI RESEP
+    </a>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+    <svg class="w-6 h-6 text-gi-gold opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+  </div>
+</header>
+
+<section id="recipes" class="relative z-10 max-w-7xl mx-auto px-4 py-20">
+
+  <div class="text-center mb-14">
+    <div class="ornament-line mb-4 max-w-xs mx-auto">
+      <span class="font-cinzel text-gi-gold text-xs tracking-[0.3em]">✦ KULINER TEYVAT ✦</span>
+    </div>
+    <h2 class="font-cinzel text-gi-gold font-bold text-4xl md:text-5xl mb-4">Buku Resep</h2>
+    <p class="font-crimson text-gi-muted text-lg max-w-xl mx-auto italic">
+      Filter berdasarkan region asal, kelas bintang, dan efek yang diberikan setelah dimakan.
+    </p>
+  </div>
+
+  <div class="bg-gi-card border border-gi-border rounded-2xl p-6 mb-10 space-y-6">
+
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-1.5 h-5 bg-gi-gold rounded-full"></div>
+        <span class="font-cinzel text-gi-gold text-xs tracking-widest">TAHAP 1 — REGION</span>
+      </div>
+      <div class="flex flex-wrap gap-2" id="regionFilters">
+        <button class="filter-btn active font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-gi-gold text-gi-gold" data-region="all" onclick="setFilter('region','all',this)">✦ Semua</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-mondstadt text-mondstadt hover:border-mondstadt" data-region="Mondstadt" onclick="setFilter('region','Mondstadt',this)">🌸 Mondstadt</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-liyue text-liyue hover:border-liyue" data-region="Liyue" onclick="setFilter('region','Liyue',this)">🏮 Liyue</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-inazuma text-inazuma hover:border-inazuma" data-region="Inazuma" onclick="setFilter('region','Inazuma',this)">⛩ Inazuma</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-sumeru text-sumeru hover:border-sumeru" data-region="Sumeru" onclick="setFilter('region','Sumeru',this)">🌿 Sumeru</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-fontaine text-fontaine hover:border-fontaine" data-region="Fontaine" onclick="setFilter('region','Fontaine',this)">💧 Fontaine</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-natlan text-natlan hover:border-natlan" data-region="Natlan" onclick="setFilter('region','Natlan',this)">🔥 Natlan</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-snezhnaya text-snezhnaya hover:border-snezhnaya" data-region="Snezhnaya" onclick="setFilter('region','Snezhnaya',this)">❄ Snezhnaya</button>
+      </div>
+    </div>
+
+    <div class="border-t border-gi-border"></div>
+
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-1.5 h-5 bg-gi-gold rounded-full"></div>
+        <span class="font-cinzel text-gi-gold text-xs tracking-widest">TAHAP 2 — KELAS BINTANG</span>
+      </div>
+      <div class="flex flex-wrap gap-2" id="starFilters">
+        <button class="filter-btn active font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-gi-gold text-gi-gold" data-star="all" onclick="setFilter('star','all',this)">✦ Semua</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-star1 text-star1" data-star="1" onclick="setFilter('star','1',this)">★ 1 Bintang</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-star2 text-star2" data-star="2" onclick="setFilter('star','2',this)">★★ 2 Bintang</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-star3 text-star3" data-star="3" onclick="setFilter('star','3',this)">★★★ 3 Bintang</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-star4 text-star4" data-star="4" onclick="setFilter('star','4',this)">★★★★ 4 Bintang</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-star5 text-star5" data-star="5" onclick="setFilter('star','5',this)">★★★★★ 5 Bintang</button>
+      </div>
+    </div>
+
+    <div class="border-t border-gi-border"></div>
+
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-1.5 h-5 bg-gi-gold rounded-full"></div>
+        <span class="font-cinzel text-gi-gold text-xs tracking-widest">TAHAP 3 — EFEK MAKANAN</span>
+      </div>
+      <div class="flex flex-wrap gap-2" id="effectFilters">
+        <button class="filter-btn active font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-gi-gold text-gi-gold" data-effect="all" onclick="setFilter('effect','all',this)">✦ Semua</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-red-400 text-red-400" data-effect="HP Recovery" onclick="setFilter('effect','HP Recovery',this)">❤ HP Recovery</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-orange-400 text-orange-400" data-effect="Revive" onclick="setFilter('effect','Revive',this)">✨ Revive</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-yellow-400 text-yellow-400" data-effect="ATK Boost" onclick="setFilter('effect','ATK Boost',this)">⚔ ATK Boost</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-blue-400 text-blue-400" data-effect="DEF Boost" onclick="setFilter('effect','DEF Boost',this)">🛡 DEF Boost</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-cyan-400 text-cyan-400" data-effect="CRIT Boost" onclick="setFilter('effect','CRIT Boost',this)">💫 CRIT Boost</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-green-400 text-green-400" data-effect="Stamina" onclick="setFilter('effect','Stamina',this)">🌀 Stamina</button>
+        <button class="filter-btn font-cinzel text-xs tracking-wider px-4 py-2 rounded-full border border-purple-400 text-purple-400" data-effect="Shield" onclick="setFilter('effect','Shield',this)">🔮 Shield</button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+      <div class="flex items-center gap-2">
+        <span class="font-cinzel text-gi-muted text-xs">Menampilkan:</span>
+        <span class="font-cinzel text-gi-gold text-xs" id="resultCount">48 resep</span>
+      </div>
+      <button onclick="resetAllFilters()" class="font-cinzel text-xs tracking-wider text-gi-muted hover:text-gi-gold transition-colors flex items-center gap-1">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        RESET FILTER
+      </button>
+    </div>
+  </div>
+
+  <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  </div>
+
+  <div id="emptyState" class="hidden text-center py-20">
+    <div class="empty-icon text-7xl mb-4">🍽</div>
+    <h3 class="font-cinzel text-gi-gold text-xl mb-2">Tidak Ada Resep Ditemukan</h3>
+    <p class="font-crimson text-gi-muted text-lg italic">Coba ubah filter atau kata kunci pencarianmu.</p>
+  </div>
+</section>
+
+<section id="about" class="relative z-10 py-20 border-t border-gi-border">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <div class="ornament-line mb-6 max-w-xs mx-auto">
+      <span class="font-cinzel text-gi-gold text-xs tracking-[0.3em]">✦ TENTANG ✦</span>
+    </div>
+    <h2 class="font-cinzel text-gi-gold font-bold text-3xl mb-6">Panduan Kuliner Teyvat</h2>
+    <p class="font-crimson text-gi-text text-xl leading-relaxed mb-8 italic">
+      Buku resep ini dibuat untuk membantu para Traveler menemukan dan memasak hidangan terbaik 
+      dari seluruh penjuru Teyvat. Setiap resep dilengkapi dengan bahan-bahan yang diperlukan, 
+      cara memasak, dan efek yang akan didapatkan saat dikonsumsi.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+      <div class="bg-gi-card border border-gi-border rounded-xl p-6">
+        <div class="text-4xl mb-3">🗺</div>
+        <h3 class="font-cinzel text-gi-gold text-sm tracking-wider mb-2">7 REGION</h3>
+        <p class="font-crimson text-gi-muted text-base italic">Resep dari Mondstadt, Liyue, Inazuma, Sumeru, Fontaine, Natlan, dan Snezhnaya.</p>
+      </div>
+      <div class="bg-gi-card border border-gi-border rounded-xl p-6">
+        <div class="text-4xl mb-3">⭐</div>
+        <h3 class="font-cinzel text-gi-gold text-sm tracking-wider mb-2">5 KELAS RARITAS</h3>
+        <p class="font-crimson text-gi-muted text-base italic">Dari makanan biasa 1 bintang hingga hidangan legendaris 5 bintang.</p>
+      </div>
+      <div class="bg-gi-card border border-gi-border rounded-xl p-6">
+        <div class="text-4xl mb-3">✨</div>
+        <h3 class="font-cinzel text-gi-gold text-sm tracking-wider mb-2">7 EFEK UNIK</h3>
+        <p class="font-crimson text-gi-muted text-base italic">Mulai dari pemulihan HP, kebangkitan, hingga peningkatan ATK, DEF, dan CRIT.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="relative z-10 border-t border-gi-border py-8 text-center">
+  <div class="ornament-line mb-4 max-w-xs mx-auto">
+    <svg class="w-5 h-5 fill-gi-gold" viewBox="0 0 24 24">
+      <path d="M12 2L8.5 8.5 2 9.27l5 4.87-1.18 6.88L12 17.77l6.18 3.25L17 14.14l5-4.87-6.5-.77L12 2z"/>
+    </svg>
+  </div>
+  <p class="font-cinzel text-gi-muted text-xs tracking-widest">
+    GENSHIN RECIPE BOOK &copy; 2026 — FAN-MADE PROJECT
+  </p>
+  <p class="font-crimson text-gi-muted text-sm mt-1 italic">
+    Genshin Impact adalah milik HoYoverse. Ini adalah proyek fan-made non-komersial.
+  </p>
+</footer>
+
+<div class="modal-overlay" id="recipeModal" onclick="closeModalOnBg(event)">
+  <div class="modal-content" id="modalContent">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<script>
+const IMG = (id) => `https://genshin.jmp.blue/consumables/food/${id}`;
+
+const recipes = [
+  // ─── MONDSTADT ───
+  {
+    id: 1, name: "Sweet Madame",
+    region: "Mondstadt", star: 1, effect: "HP Recovery",
+    img: IMG("sweet-madame"),
+    desc: "Daging unggas panggang dengan madu liar. Memulihkan HP karakter.",
+    hp: "Memulihkan 300~1900 HP",
+    ingredients: ["2x Fowl", "2x Sweet Flower"],
+    obtain: "Beli dari Good Hunter atau dimasak sendiri",
+    special: "Xiangling memasak versi spesial: Crispy Outside Tender Inside",
+    color: "mondstadt"
+  },
+  {
+    id: 2, name: "Sticky Honey Roast",
+    region: "Mondstadt", star: 2, effect: "ATK Boost",
+    img: IMG("sticky-honey-roast"),
+    desc: "Daging yang dimasak dengan madu dan rempah pilihan, meningkatkan ATK.",
+    hp: "Meningkatkan ATK 66~95 poin",
+    ingredients: ["3x Raw Meat", "2x Carrot", "2x Sugarcane"],
+    obtain: "Dimasak sendiri",
+    special: "Razor memasak versi spesial: Once Upon a Time in Mondstadt",
+    color: "mondstadt"
+  },
+  {
+    id: 3, name: "Pile 'Em Up",
+    region: "Mondstadt", star: 3, effect: "DEF Boost",
+    img: IMG("pile-em-up"),
+    desc: "Hidangan berlapis penuh gizi yang meningkatkan DEF seluruh tim.",
+    hp: "Meningkatkan DEF 88~126 poin",
+    ingredients: ["3x Flour", "3x Cabbage", "3x Cheese"],
+    obtain: "Dimasak sendiri atau dibeli dari Good Hunter",
+    special: "Noelle memasak versi spesial: Smooth, Silky, Satisfying",
+    color: "mondstadt"
+  },
+  {
+    id: 4, name: "Fisherman's Toast",
+    region: "Mondstadt", star: 2, effect: "HP Recovery",
+    img: IMG("fishermans-toast"),
+    desc: "Roti panggang dengan ikan segar, populer di kalangan nelayan Mondstadt.",
+    hp: "Memulihkan 1200~2000 HP",
+    ingredients: ["2x Flour", "2x Fish", "1x Mushroom"],
+    obtain: "Dimasak sendiri",
+    special: "Bennett memasak versi spesial: Definitely Not Bar Food",
+    color: "mondstadt"
+  },
+  {
+    id: 5, name: "Mondstadt Hash Brown",
+    region: "Mondstadt", star: 2, effect: "Stamina",
+    img: IMG("mondstadt-hash-brown"),
+    desc: "Hash brown kentang khas Mondstadt yang lezat.",
+    hp: "Meningkatkan Stamina maksimum 25 poin",
+    ingredients: ["2x Potato", "2x Cabbage", "1x Bird Egg"],
+    obtain: "Dimasak sendiri",
+    special: "Barbara memasak versi spesial: Glorious Morning",
+    color: "mondstadt"
+  },
+  {
+    id: 6, name: "Satisfying Salad",
+    region: "Mondstadt", star: 1, effect: "ATK Boost",
+    img: IMG("satisfying-salad"),
+    desc: "Salad sederhana dengan sayuran segar Mondstadt.",
+    hp: "Meningkatkan ATK 24~66 poin",
+    ingredients: ["3x Cabbage", "2x Dandelion Seed", "2x Mushroom"],
+    obtain: "Dimasak sendiri",
+    special: "Jean memasak versi spesial: What the Doctor Ordered",
+    color: "mondstadt"
+  },
+  {
+    id: 7, name: "Mora Meat",
+    region: "Mondstadt", star: 3, effect: "HP Recovery",
+    img: IMG("mora-meat"),
+    desc: "Daging berkualitas tinggi yang populer di seluruh Teyvat.",
+    hp: "Memulihkan 2550~3150 HP",
+    ingredients: ["4x Raw Meat", "2x Flour", "1x Mushroom"],
+    obtain: "Dimasak sendiri",
+    special: "Diluc memasak versi spesial: Once Upon a Time in Mondstadt",
+    color: "mondstadt"
+  },
+
+  // ─── LIYUE ───
+  {
+    id: 8, name: "Jade Parcels",
+    region: "Liyue", star: 5, effect: "ATK Boost",
+    img: IMG("jade-parcels"),
+    desc: "Hidangan Liyue paling legendaris. Meningkatkan ATK dan CRIT Rate secara bersamaan.",
+    hp: "Meningkatkan ATK 260~372 poin & CRIT Rate 8%",
+    ingredients: ["3x Lotus Head", "3x Jueyun Chili", "3x Cabbage", "1x Flour"],
+    obtain: "Dimasak sendiri (resep langka)",
+    special: "Xiao memasak versi spesial: Sweet Dream",
+    color: "liyue"
+  },
+  {
+    id: 9, name: "Almond Tofu",
+    region: "Liyue", star: 3, effect: "ATK Boost",
+    img: IMG("almond-tofu"),
+    desc: "Tofu almond manis khas Liyue yang disukai oleh banyak karakter.",
+    hp: "Meningkatkan ATK 66~126 poin",
+    ingredients: ["3x Almond", "2x Sugar", "1x Milk"],
+    obtain: "Dimasak sendiri atau beli dari chef Liyue",
+    special: "Xiao sangat menyukai hidangan ini",
+    color: "liyue"
+  },
+  {
+    id: 10, name: "Lotus Flower Crisp",
+    region: "Liyue", star: 4, effect: "DEF Boost",
+    img: IMG("lotus-flower-crisp"),
+    desc: "Kue crispy berbahan bunga lotus, meningkatkan pertahanan secara signifikan.",
+    hp: "Meningkatkan DEF 235~320 poin",
+    ingredients: ["4x Lotus Head", "2x Flour", "2x Butter"],
+    obtain: "Dimasak sendiri",
+    special: "Ningguang memasak versi spesial: A Literary Triumph",
+    color: "liyue"
+  },
+  {
+    id: 11, name: "Spicy Stew",
+    region: "Liyue", star: 2, effect: "HP Recovery",
+    img: IMG("spicy-stew"),
+    desc: "Semur pedas khas Liyue yang menghangatkan tubuh dan memulihkan HP.",
+    hp: "Memulihkan 1200~2000 HP",
+    ingredients: ["3x Raw Meat", "2x Jueyun Chili"],
+    obtain: "Dimasak sendiri",
+    special: "Resep umum yang dikenal banyak petualang",
+    color: "liyue"
+  },
+  {
+    id: 12, name: "Tea Break Pancake",
+    region: "Liyue", star: 3, effect: "CRIT Boost",
+    img: IMG("tea-break-pancake"),
+    desc: "Pancake lembut khas waktu minum teh di Liyue.",
+    hp: "Meningkatkan CRIT Rate 8%~15%",
+    ingredients: ["2x Flour", "1x Sugar", "2x Bird Egg", "1x Butter"],
+    obtain: "Dimasak sendiri",
+    special: "Keqing memasak versi spesial: Survival Grilled Fish",
+    color: "liyue"
+  },
+  {
+    id: 13, name: "Golden Shrimp Balls",
+    region: "Liyue", star: 4, effect: "ATK Boost",
+    img: IMG("golden-shrimp-balls"),
+    desc: "Bola udang goreng berlapis tepung keemasan yang renyah.",
+    hp: "Meningkatkan ATK 224~320 poin",
+    ingredients: ["3x Shrimp Meat", "3x Flour", "1x Lard"],
+    obtain: "Dimasak sendiri",
+    special: "Xinyan memasak versi spesial: Rockin' Riffin' Chicken!",
+    color: "liyue"
+  },
+  {
+    id: 14, name: "Moon Pie",
+    region: "Liyue", star: 3, effect: "Revive",
+    img: IMG("moon-pie"),
+    desc: "Kue bulan khas Festival Lantern Rite. Dapat membangkitkan karakter yang jatuh.",
+    hp: "Membangkitkan & memulihkan 15%~25% HP",
+    ingredients: ["4x Flour", "2x Sugar", "2x Butter"],
+    obtain: "Dimasak sendiri saat Festival Lantern Rite",
+    special: "Hidangan festival spesial Liyue",
+    color: "liyue"
+  },
+
+  // ─── INAZUMA ───
+  {
+    id: 15, name: "Sakura Mochi",
+    region: "Inazuma", star: 3, effect: "HP Recovery",
+    img: IMG("sakura-mochi"),
+    desc: "Mochi lembut dengan rasa sakura, hidangan tradisional Inazuma.",
+    hp: "Memulihkan 2550~3150 HP",
+    ingredients: ["4x Rice", "2x Sugar", "2x Sakura Bloom"],
+    obtain: "Dimasak sendiri",
+    special: "Arataki Itto memasak versi spesial: Great General's Glory",
+    color: "inazuma"
+  },
+  {
+    id: 16, name: "Sashimi Platter",
+    region: "Inazuma", star: 4, effect: "CRIT Boost",
+    img: IMG("sashimi-platter"),
+    desc: "Sajian sashimi premium khas Inazuma yang meningkatkan ketajaman serangan.",
+    hp: "Meningkatkan CRIT Rate 12%~20%",
+    ingredients: ["4x Raimei Angelfish", "3x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Sangonomiya Kokomi memasak versi spesial: Floral Seafood",
+    color: "inazuma"
+  },
+  {
+    id: 17, name: "Crab, Ham & Veggie Bake",
+    region: "Inazuma", star: 4, effect: "DEF Boost",
+    img: IMG("crab-ham-veggie-bake"),
+    desc: "Hidangan panggang berlapis kepiting dan sayuran pilihan Inazuma.",
+    hp: "Meningkatkan DEF 235~320 poin",
+    ingredients: ["3x Crab", "3x Ham", "2x Radish", "1x Cabbage"],
+    obtain: "Dimasak sendiri",
+    special: "Yoimiya memasak versi spesial: Summer Festival Fish",
+    color: "inazuma"
+  },
+  {
+    id: 18, name: "Dango Milk",
+    region: "Inazuma", star: 2, effect: "Stamina",
+    img: IMG("dango-milk"),
+    desc: "Susu hangat dengan dango khas Inazuma, memberi energi ekstra.",
+    hp: "Mengurangi konsumsi Stamina saat sprint 15%",
+    ingredients: ["3x Rice", "2x Sugar", "2x Milk"],
+    obtain: "Dimasak sendiri",
+    special: "Thoma memasak versi spesial: I-It's Not Like I Made This for You or Anything...",
+    color: "inazuma"
+  },
+  {
+    id: 19, name: "Invigorating Kitty Meal",
+    region: "Inazuma", star: 3, effect: "ATK Boost",
+    img: IMG("invigorating-kitty-meal"),
+    desc: "Makanan spesial berbentuk kucing yang sangat menggemaskan dari Inazuma.",
+    hp: "Meningkatkan ATK 66~126 poin",
+    ingredients: ["3x Rice", "2x Fish", "2x Flour"],
+    obtain: "Dimasak sendiri",
+    special: "Resep eksklusif dari Inazuma",
+    color: "inazuma"
+  },
+  {
+    id: 20, name: "Onigiri",
+    region: "Inazuma", star: 1, effect: "HP Recovery",
+    img: IMG("onigiri"),
+    desc: "Nasi kepal sederhana khas Inazuma, mudah dibuat dan mengenyangkan.",
+    hp: "Memulihkan 300~500 HP",
+    ingredients: ["3x Rice", "1x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Makanan sederhana yang digemari petualang",
+    color: "inazuma"
+  },
+
+  // ─── SUMERU ───
+  {
+    id: 21, name: "Halvamazd",
+    region: "Sumeru", star: 3, effect: "CRIT Boost",
+    img: IMG("halvamazd"),
+    desc: "Makanan manis khas Sumeru yang meningkatkan presisi serangan.",
+    hp: "Meningkatkan CRIT Rate 8%~12%",
+    ingredients: ["3x Almond", "2x Sugar", "2x Butter", "1x Flour"],
+    obtain: "Dimasak sendiri",
+    special: "Favorit para akademisi Sumeru",
+    color: "sumeru"
+  },
+  {
+    id: 22, name: "Shawarma Wrap",
+    region: "Sumeru", star: 3, effect: "ATK Boost",
+    img: IMG("shawarma-wrap"),
+    desc: "Gulungan rempah khas Sumeru yang menggiurkan dan menambah kekuatan.",
+    hp: "Meningkatkan ATK 66~126 poin",
+    ingredients: ["3x Raw Meat", "2x Flour", "2x Sumeru Rose"],
+    obtain: "Dimasak sendiri atau beli di Port Ormos",
+    special: "Makanan jalanan populer di pasar Sumeru",
+    color: "sumeru"
+  },
+  {
+    id: 23, name: "Mushroom Pizza",
+    region: "Sumeru", star: 2, effect: "DEF Boost",
+    img: IMG("mushroom-pizza"),
+    desc: "Pizza jamur lezat dengan cita rasa unik tanah hutan Sumeru.",
+    hp: "Meningkatkan DEF 88~126 poin",
+    ingredients: ["3x Mushroom", "2x Flour", "1x Cheese"],
+    obtain: "Dimasak sendiri",
+    special: "Kandungan jamur Sumeru memberikan rasa khas",
+    color: "sumeru"
+  },
+  {
+    id: 24, name: "Biryani",
+    region: "Sumeru", star: 4, effect: "ATK Boost",
+    img: IMG("biryani"),
+    desc: "Nasi biryani khas akademisi Sumeru, penuh rempah yang meningkatkan ATK.",
+    hp: "Meningkatkan ATK 224~320 poin",
+    ingredients: ["4x Rice", "3x Raw Meat", "3x Padisarah", "2x Coriander"],
+    obtain: "Dimasak sendiri",
+    special: "Tighnari memasak versi spesial: Forest Watcher's Choice",
+    color: "sumeru"
+  },
+  {
+    id: 25, name: "Tricolor Dango",
+    region: "Sumeru", star: 2, effect: "HP Recovery",
+    img: IMG("tricolor-dango"),
+    desc: "Dango tiga warna khas akademisi Sumeru, ringan dan menyegarkan.",
+    hp: "Memulihkan 1200~2000 HP",
+    ingredients: ["3x Rice", "2x Sugar"],
+    obtain: "Dimasak sendiri",
+    special: "Populer di kalangan mahasiswa akademisi",
+    color: "sumeru"
+  },
+  {
+    id: 26, name: "Tahchin",
+    region: "Sumeru", star: 4, effect: "HP Recovery",
+    img: IMG("tahchin"),
+    desc: "Nasi kunyit lapis berbahan saffron khas Sumeru, mewah dan mengenyangkan.",
+    hp: "Memulihkan 34%~40% HP maks",
+    ingredients: ["4x Rice", "3x Raw Meat", "2x Bird Egg", "1x Sumeru Rose"],
+    obtain: "Dimasak sendiri",
+    special: "Candace memasak versi spesial: The Most Delicious Dish",
+    color: "sumeru"
+  },
+
+  // ─── FONTAINE ───
+  {
+    id: 27, name: "Fish with Cream Sauce",
+    region: "Fontaine", star: 4, effect: "HP Recovery",
+    img: IMG("fish-with-cream-sauce"),
+    desc: "Ikan lembut dengan saus krim khas restoran haute cuisine Fontaine.",
+    hp: "Memulihkan 34%~40% HP maks",
+    ingredients: ["3x Fontemer Fish", "3x Milk", "2x Butter", "1x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Wriothesley memasak versi spesial: Cold-Noodles with Mountain Delicacies",
+    color: "fontaine"
+  },
+  {
+    id: 28, name: "Steak",
+    region: "Fontaine", star: 3, effect: "ATK Boost",
+    img: IMG("steak"),
+    desc: "Steak premium bergaya Fontaine yang dimasak sempurna.",
+    hp: "Meningkatkan ATK 66~126 poin",
+    ingredients: ["3x Raw Meat", "2x Salt", "1x Butter"],
+    obtain: "Dimasak sendiri",
+    special: "Lyney memasak versi spesial: Prized Performer's Prologue",
+    color: "fontaine"
+  },
+  {
+    id: 29, name: "Fruity Skewers",
+    region: "Fontaine", star: 2, effect: "Stamina",
+    img: IMG("fruity-skewers"),
+    desc: "Tusukan buah-buahan segar khas Fontaine yang menyegarkan.",
+    hp: "Mengurangi konsumsi Stamina saat berenang 15%",
+    ingredients: ["3x Berry", "2x Apple", "2x Sunsettia"],
+    obtain: "Dimasak sendiri",
+    special: "Makanan jajanan populer di Fontaine",
+    color: "fontaine"
+  },
+  {
+    id: 30, name: "Cold Cut Platter",
+    region: "Fontaine", star: 4, effect: "DEF Boost",
+    img: IMG("cold-cut-platter"),
+    desc: "Tatanan irisan daging dingin khas Fontaine yang meningkatkan pertahanan.",
+    hp: "Meningkatkan DEF 235~320 poin",
+    ingredients: ["4x Ham", "2x Turnip", "2x Cheese"],
+    obtain: "Dimasak sendiri",
+    special: "Charlotte memasak versi spesial: Investigative Report",
+    color: "fontaine"
+  },
+  {
+    id: 31, name: "Fish-Flavored Toast",
+    region: "Fontaine", star: 2, effect: "HP Recovery",
+    img: IMG("fish-flavored-toast"),
+    desc: "Roti bakar ala Fontaine dengan isian ikan segar berkualitas tinggi.",
+    hp: "Memulihkan 1200~2000 HP",
+    ingredients: ["2x Flour", "2x Fontemer Fish", "1x Butter"],
+    obtain: "Dimasak sendiri",
+    special: "Populer di kalangan nelayan Fontaine",
+    color: "fontaine"
+  },
+  {
+    id: 32, name: "Bulle Soufflé",
+    region: "Fontaine", star: 4, effect: "Shield",
+    img: IMG("bulle-souffle"),
+    desc: "Soufflé khas Fontaine berbahan Bulle Fruit yang memberikan lapisan pelindung ajaib.",
+    hp: "Memberikan Shield 700~900 HP untuk 30 detik",
+    ingredients: ["3x Bulle Fruit", "2x Bird Egg", "2x Milk", "1x Sugar"],
+    obtain: "Dimasak sendiri",
+    special: "Resep dari grand restaurant Fontaine",
+    color: "fontaine"
+  },
+
+  // ─── NATLAN ───
+  {
+    id: 33, name: "Flaming Red Bolognese",
+    region: "Natlan", star: 4, effect: "ATK Boost",
+    img: IMG("flaming-red-bolognese"),
+    desc: "Pasta saus merah pedas khas Natlan yang membakar semangat tempur.",
+    hp: "Meningkatkan ATK 224~320 poin",
+    ingredients: ["3x Raw Meat", "3x Jueyun Chili", "2x Flour", "1x Tomato"],
+    obtain: "Dimasak sendiri",
+    special: "Resep eksklusif suku Natlan",
+    color: "natlan"
+  },
+  {
+    id: 34, name: "Char-Grilled Meat",
+    region: "Natlan", star: 3, effect: "HP Recovery",
+    img: IMG("come-and-get-it"),
+    desc: "Daging bakar khas Natlan dengan bumbu pedas yang kuat.",
+    hp: "Memulihkan 2550~3150 HP",
+    ingredients: ["4x Raw Meat", "2x Jueyun Chili", "2x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Hidangan tradisional suku Natlan",
+    color: "natlan"
+  },
+  {
+    id: 35, name: "Spicy Stew (Natlan)",
+    region: "Natlan", star: 3, effect: "Revive",
+    img: IMG("spicy-stew"),
+    desc: "Daging rebus pedas Natlan dengan rempah api, dapat membangkitkan rekan.",
+    hp: "Membangkitkan & memulihkan 15%~25% HP",
+    ingredients: ["3x Raw Meat", "3x Jueyun Chili", "1x Lard"],
+    obtain: "Dimasak sendiri",
+    special: "Xilonen memasak versi spesial: A Warm Bowl of Chili",
+    color: "natlan"
+  },
+  {
+    id: 36, name: "Crispy Potato Shrimp Platter",
+    region: "Natlan", star: 3, effect: "Stamina",
+    img: IMG("crispy-potato-shrimp-platter"),
+    desc: "Tatanan kentang crispy dan udang khas festival Natlan.",
+    hp: "Meningkatkan Stamina maksimum 25 poin",
+    ingredients: ["3x Potato", "3x Shrimp Meat", "2x Flour"],
+    obtain: "Dimasak sendiri",
+    special: "Jajanan populer di festival Natlan",
+    color: "natlan"
+  },
+  {
+    id: 37, name: "Braised Meat",
+    region: "Natlan", star: 3, effect: "Shield",
+    img: IMG("braised-meat"),
+    desc: "Daging semur khas Natlan dengan bumbu rempah yang memberikan perlindungan.",
+    hp: "Memberikan Shield 900~1200 HP untuk 30 detik",
+    ingredients: ["4x Raw Meat", "3x Flaming Flower Stamen", "2x Cabbage"],
+    obtain: "Dimasak sendiri",
+    special: "Resep sakral suku Natlan",
+    color: "natlan"
+  },
+
+  // ─── SNEZHNAYA ───
+  {
+    id: 38, name: "Northern Smoked Chicken",
+    region: "Snezhnaya", star: 4, effect: "DEF Boost",
+    img: IMG("northern-smoked-chicken"),
+    desc: "Ayam asap khas Snezhnaya dengan rasa kuat yang meningkatkan pertahanan.",
+    hp: "Meningkatkan DEF 235~320 poin",
+    ingredients: ["4x Fowl", "2x Turnip", "2x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Makanan tradisional Fatui",
+    color: "snezhnaya"
+  },
+  {
+    id: 39, name: "Northern Apple Stew",
+    region: "Snezhnaya", star: 3, effect: "HP Recovery",
+    img: IMG("northern-apple-stew"),
+    desc: "Semur apel khas utara Snezhnaya yang menghangatkan jiwa di musim dingin.",
+    hp: "Memulihkan 2550~3150 HP",
+    ingredients: ["3x Apple", "2x Raw Meat", "2x Turnip"],
+    obtain: "Dimasak sendiri",
+    special: "Makanan jiwa Snezhnaya",
+    color: "snezhnaya"
+  },
+  {
+    id: 40, name: "Goulash",
+    region: "Snezhnaya", star: 3, effect: "Stamina",
+    img: IMG("goulash"),
+    desc: "Sup daging pedas khas Snezhnaya yang memberikan energi tahan lama.",
+    hp: "Mengurangi konsumsi Stamina 15%",
+    ingredients: ["3x Raw Meat", "2x Jueyun Chili", "2x Turnip"],
+    obtain: "Dimasak sendiri",
+    special: "Snack populer di jalanan Snezhnaya",
+    color: "snezhnaya"
+  },
+  {
+    id: 41, name: "Medovik",
+    region: "Snezhnaya", star: 3, effect: "CRIT Boost",
+    img: IMG("tea-break-pancake"),
+    desc: "Kue madu berlapis khas Snezhnaya yang meningkatkan ketajaman serangan.",
+    hp: "Meningkatkan CRIT Rate 8%~12%",
+    ingredients: ["4x Flour", "3x Honey", "2x Butter", "1x Bird Egg"],
+    obtain: "Dimasak sendiri",
+    special: "Kue legendaris Snezhnaya",
+    color: "snezhnaya"
+  },
+  {
+    id: 42, name: "Fullmoon Egg",
+    region: "Snezhnaya", star: 3, effect: "Revive",
+    img: IMG("fullmoon-egg"),
+    desc: "Telur bulat sempurna khas Snezhnaya, mampu membangkitkan rekan yang jatuh.",
+    hp: "Membangkitkan & memulihkan 20%~35% HP",
+    ingredients: ["4x Bird Egg", "2x Flour", "1x Salt", "1x Cabbage"],
+    obtain: "Dimasak sendiri",
+    special: "Comfort food utama warga Snezhnaya",
+    color: "snezhnaya"
+  },
+
+  // ─── TAMBAHAN MONDSTADT (5★ & Revive) ───
+  {
+    id: 43, name: "Barbatos Ratatouille",
+    region: "Mondstadt", star: 5, effect: "Revive",
+    img: IMG("barbatos-ratatouille"),
+    desc: "Ratatouille legendaris yang diberkati oleh Barbatos, mampu membangkitkan dengan penuh kesehatan.",
+    hp: "Membangkitkan & memulihkan 25%~35% HP",
+    ingredients: ["4x Tomato", "4x Onion", "3x Cabbage", "2x Dandelion Seed"],
+    obtain: "Resep langka festival angin Mondstadt",
+    special: "Venti memasak versi spesial: A Storm of Spice and Melodies",
+    color: "mondstadt"
+  },
+  {
+    id: 44, name: "Come and Get It",
+    region: "Mondstadt", star: 4, effect: "Shield",
+    img: IMG("come-and-get-it"),
+    desc: "Hidangan istimewa Knight of Favonius yang memberikan perlindungan magis.",
+    hp: "Memberikan Shield 700~900 HP untuk 30 detik",
+    ingredients: ["3x Flour", "2x Dandelion Seed", "2x Sugar", "1x Butter"],
+    obtain: "Dimasak sendiri",
+    special: "Kaeya memasak versi spesial: Fruity Skewers with Dressing",
+    color: "mondstadt"
+  },
+  // ─── TAMBAHAN LIYUE ───
+  {
+    id: 45, name: "Grilled Tiger Fish",
+    region: "Liyue", star: 2, effect: "ATK Boost",
+    img: IMG("grilled-tiger-fish"),
+    desc: "Ikan harimau panggang khas Liyue yang meningkatkan kekuatan serangan.",
+    hp: "Meningkatkan ATK 24~66 poin",
+    ingredients: ["3x Tiger Fish", "1x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Sering dijual nelayan di Liyue Harbor",
+    color: "liyue"
+  },
+  {
+    id: 46, name: "Zhongyuan Chop Suey",
+    region: "Liyue", star: 5, effect: "HP Recovery",
+    img: IMG("zhongyuan-chop-suey"),
+    desc: "Campuran mewah masakan Zhongyuan — hidangan paling bergengsi dari Liyue.",
+    hp: "Memulihkan 50% HP maks + 2350 HP",
+    ingredients: ["4x Flour", "3x Shrimp Meat", "3x Crab", "2x Bamboo Shoot"],
+    obtain: "Resep langka Tahun Baru Liyue",
+    special: "Hu Tao memasak versi spesial: Crimson Meat Cube",
+    color: "liyue"
+  },
+  // ─── TAMBAHAN INAZUMA ───
+  {
+    id: 47, name: "Sakura Tempura",
+    region: "Inazuma", star: 4, effect: "CRIT Boost",
+    img: IMG("sakura-tempura"),
+    desc: "Tempura sakura khas Inazuma yang meningkatkan ketajaman serangan.",
+    hp: "Meningkatkan CRIT Rate 12%~20%",
+    ingredients: ["4x Sakura Bloom", "3x Flour", "2x Shrimp Meat", "2x Salt"],
+    obtain: "Dimasak sendiri",
+    special: "Raiden Shogun memasak versi spesial: Elegant Tempura",
+    color: "inazuma"
+  },
+  // ─── TAMBAHAN FONTAINE ───
+  {
+    id: 48, name: "Flaming Red Bolognese (Fontaine)",
+    region: "Fontaine", star: 5, effect: "DEF Boost",
+    img: IMG("crispy-potato-shrimp-platter"),
+    desc: "Versi mewah bolognese khas Fontaine. Memberikan pertahanan tertinggi.",
+    hp: "Meningkatkan DEF 320~440 poin",
+    ingredients: ["4x Fontemer Unihorn", "3x Fontemer Fish", "3x Crab", "2x Salt"],
+    obtain: "Resep legendaris dari chef bintang Fontaine",
+    special: "Neuvillette memasak versi spesial: Waters of Purification",
+    color: "fontaine"
+  }
+];
+
+let activeFilters = { region: 'all', star: 'all', effect: 'all' };
+function createStars() {
+  const bg = document.getElementById('starsBg');
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${(Math.random()*4+2).toFixed(1)}s;
+      --del:${(Math.random()*5).toFixed(1)}s;
+      opacity:${(Math.random()*0.6+0.1).toFixed(2)};
+    `;
+    bg.appendChild(s);
+  }
+}
+
+function createParticles() {
+  const con = document.getElementById('particlesContainer');
+  const colors = ['#c8a951','#4a90d9','#a855f7','#4ade80','#f59e0b'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = Math.random() * 4 + 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${Math.random()*100}%;
+      background:${color};
+      opacity:0.4;
+      --dur:${(Math.random()*10+6).toFixed(1)}s;
+      --del:${(Math.random()*10).toFixed(1)}s;
+      filter:blur(${sz/2}px);
+    `;
+    con.appendChild(p);
+  }
+}
+
+function setFilter(type, value, btn) {
+  activeFilters[type] = value;
+  // update active class in respective group
+  const groupId = type === 'region' ? 'regionFilters' : type === 'star' ? 'starFilters' : 'effectFilters';
+  document.querySelectorAll(`#${groupId} .filter-btn`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function resetAllFilters() {
+  activeFilters = { region: 'all', star: 'all', effect: 'all' };
+  document.getElementById('searchInput').value = '';
+  ['regionFilters','starFilters','effectFilters'].forEach(gid => {
+    const btns = document.querySelectorAll(`#${gid} .filter-btn`);
+    btns.forEach(b => b.classList.remove('active'));
+    btns[0].classList.add('active');
+  });
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = recipes.filter(r => {
+    const matchRegion = activeFilters.region === 'all' || r.region === activeFilters.region;
+    const matchStar   = activeFilters.star   === 'all' || String(r.star) === activeFilters.star;
+    const matchEffect = activeFilters.effect === 'all' || r.effect === activeFilters.effect;
+    const matchSearch = !search || r.name.toLowerCase().includes(search) || r.region.toLowerCase().includes(search) || r.effect.toLowerCase().includes(search);
+    return matchRegion && matchStar && matchEffect && matchSearch;
+  });
+  renderCards(filtered);
+}
+
+const starColors = {1:'#9e9e9e',2:'#75b09c',3:'#5b8dd9',4:'#a855f7',5:'#f59e0b'};
+const effectIcons = {
+  'HP Recovery':'❤','Revive':'✨','ATK Boost':'⚔','DEF Boost':'🛡',
+  'CRIT Boost':'💫','Stamina':'🌀','Shield':'🔮'
+};
+const regionColors = {
+  'Mondstadt':'#6ab4c4','Liyue':'#e8a84a','Inazuma':'#c084fc',
+  'Sumeru':'#4ade80','Fontaine':'#60a5fa','Natlan':'#f97316','Snezhnaya':'#93c5fd'
+};
+const regionEmoji = {
+  'Mondstadt':'🌸','Liyue':'🏮','Inazuma':'⛩','Sumeru':'🌿',
+  'Fontaine':'💧','Natlan':'🔥','Snezhnaya':'❄'
+};
+
+function renderStars(n, color) {
+  return Array.from({length:5}, (_,i) =>
+    `<span style="color:${i<n?color:'#2a3a50'};text-shadow:${i<n?`0 0 6px ${color}60`:''}">${i<n?'★':'★'}</span>`
+  ).join('');
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('recipeGrid');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('resultCount').textContent = `${list.length} resep`;
+
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  grid.innerHTML = list.map(r => {
+    const sc = starColors[r.star];
+    const rc = regionColors[r.region];
+    const ei = effectIcons[r.effect] || '✦';
+    const re = regionEmoji[r.region] || '✦';
+
+    const imgSrc = r.img;
+
+    return `
+    <div class="recipe-card rarity-${r.star} bg-gi-card border border-gi-border rounded-xl overflow-hidden cursor-pointer"
+         style="border-top-color:${sc}"
+         onclick="openModal(${r.id})" role="button" tabindex="0"
+         onkeypress="if(event.key==='Enter')openModal(${r.id})">
+
+      <div class="card-img-wrap h-44 bg-gi-darker relative flex items-center justify-center">
+        <div class="card-overlay"></div>
+        <img src="${imgSrc}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             alt="${r.name}"
+             class="h-36 w-36 object-contain drop-shadow-[0_0_16px_rgba(200,169,81,0.4)] relative z-10" />
+
+        <div style="display:none" class="absolute inset-0 flex items-center justify-center text-7xl opacity-60">🍽</div>
+
+
+        <div class="absolute top-3 left-3 z-20 flex items-center gap-1 px-2 py-1 rounded-full"
+             style="background:${rc}22;border:1px solid ${rc}60">
+          <span class="text-xs">${re}</span>
+          <span class="region-badge" style="color:${rc}">${r.region}</span>
+        </div>
+
+
+        <div class="absolute top-3 right-3 z-20 px-2 py-1 rounded-full"
+             style="background:${sc}22;border:1px solid ${sc}60">
+          <span class="text-xs font-bold" style="color:${sc}">${r.star}★</span>
+        </div>
+      </div>
+
+
+      <div class="p-4">
+        <h3 class="font-cinzel text-gi-text font-semibold text-sm mb-1 line-clamp-1">${r.name}</h3>
+        <p class="font-crimson text-gi-muted text-sm italic leading-snug line-clamp-2 mb-3">${r.desc}</p>
+
+
+        <div class="flex items-center justify-between">
+          <div class="flex gap-px text-xs">${renderStars(r.star, sc)}</div>
+          <div class="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-cinzel"
+               style="background:rgba(200,169,81,0.1);color:#c8a951;border:1px solid rgba(200,169,81,0.2)">
+            <span>${ei}</span>
+            <span class="tracking-wide" style="font-size:0.6rem">${r.effect}</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="h-0.5 w-full" style="background:linear-gradient(90deg,transparent,${sc},transparent)"></div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  const sc = starColors[r.star];
+  const rc = regionColors[r.region];
+  const ei = effectIcons[r.effect] || '✦';
+  const re = regionEmoji[r.region] || '✦';
+
+  document.getElementById('modalContent').innerHTML = `
+    <!-- Modal header image -->
+    <div class="relative h-56 flex items-center justify-center overflow-hidden rounded-t-2xl"
+         style="background:radial-gradient(ellipse at center, ${rc}15 0%, #0d1117 100%)">
+      <div class="absolute inset-0" style="background:radial-gradient(circle at center, ${sc}10 0%, transparent 70%)"></div>
+
+      <!-- Decorative rings -->
+      <div class="absolute w-48 h-48 rounded-full border opacity-10"
+           style="border-color:${sc};animation:spin 20s linear infinite"></div>
+      <div class="absolute w-32 h-32 rounded-full border opacity-10"
+           style="border-color:${rc};animation:spin 15s linear infinite reverse"></div>
+
+      <img src="${r.img}"
+           onerror="this.style.display='none';this.parentElement.querySelector('.modal-fallback').style.display='flex'"
+           alt="${r.name}"
+           class="h-40 w-40 object-contain drop-shadow-[0_0_30px_rgba(200,169,81,0.6)] relative z-10
+                  hover:scale-110 transition-transform duration-500" />
+      <div class="modal-fallback absolute inset-0 items-center justify-center text-8xl opacity-40" style="display:none">🍽</div>
+
+      <!-- Close btn -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center
+              rounded-full bg-gi-panel border border-gi-border text-gi-muted hover:text-gi-gold
+              hover:border-gi-gold transition-all z-20">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="p-6 space-y-5">
+      <!-- Title row -->
+      <div>
+        <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+          <h2 class="font-cinzel text-2xl font-bold" style="color:${sc}">${r.name}</h2>
+          <div class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-cinzel"
+               style="background:${rc}20;color:${rc};border:1px solid ${rc}40">
+            ${re} ${r.region}
+          </div>
+        </div>
+
+        <!-- Stars -->
+        <div class="flex items-center gap-2 mb-3">
+          <div class="flex gap-0.5 text-sm">${renderStars(r.star, sc)}</div>
+          <span class="font-cinzel text-xs tracking-wider" style="color:${sc}">${r.star} BINTANG</span>
+        </div>
+
+        <p class="font-crimson text-gi-text text-lg italic leading-relaxed">${r.desc}</p>
+      </div>
+
+      <div class="border-t border-gi-border"></div>
+
+      <!-- Effect -->
+      <div class="flex items-center gap-3 p-3 rounded-xl"
+           style="background:rgba(200,169,81,0.08);border:1px solid rgba(200,169,81,0.2)">
+        <span class="text-2xl">${ei}</span>
+        <div>
+          <div class="font-cinzel text-gi-gold text-xs tracking-wider mb-1">EFEK SETELAH DIMAKAN</div>
+          <div class="font-cinzel font-bold" style="color:#e8c96b">${r.effect}</div>
+          <div class="font-crimson text-gi-text text-sm mt-0.5">${r.hp}</div>
+        </div>
+      </div>
+
+      <!-- Ingredients -->
+      <div>
+        <div class="ornament-line mb-3">
+          <span class="font-cinzel text-gi-gold text-xs tracking-widest">BAHAN-BAHAN</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${r.ingredients.map(ing => `
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gi-panel border border-gi-border">
+              <span class="text-gi-gold text-sm">✦</span>
+              <span class="font-crimson text-gi-text text-sm">${ing}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- How to obtain -->
+      <div class="p-3 rounded-xl bg-gi-panel border border-gi-border">
+        <div class="font-cinzel text-gi-muted text-xs tracking-wider mb-1">CARA MENDAPATKAN</div>
+        <p class="font-crimson text-gi-text text-base">${r.obtain}</p>
+      </div>
+
+      <!-- Special version -->
+      <div class="p-3 rounded-xl border" style="background:${sc}0a;border-color:${sc}30">
+        <div class="font-cinzel text-xs tracking-wider mb-1" style="color:${sc}">VERSI SPESIAL</div>
+        <p class="font-crimson text-gi-text text-base italic">${r.special}</p>
+      </div>
+
+      <!-- Footer button -->
+      <button onclick="closeModal()"
+              class="w-full font-cinzel text-gi-dark font-bold text-sm tracking-widest py-3 rounded-xl
+                     bg-gradient-to-r from-gi-gold to-gi-gold2
+                     hover:shadow-[0_0_20px_rgba(200,169,81,0.5)] transition-all duration-300">
+        TUTUP
+      </button>
+    </div>
+  `;
+  document.getElementById('recipeModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('recipeModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('recipeModal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+createStars();
+createParticles();
+renderCards(recipes);
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animation = 'slide-up 0.5s ease-out forwards';
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+const observeCards = () => {
+  document.querySelectorAll('.recipe-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.animationDelay = `${i * 0.05}s`;
+    io.observe(card);
+  });
+};
+
+const origRender = renderCards;
+window.renderCards = function(list) {
+  origRender(list);
+  setTimeout(observeCards, 10);
+};
+
+setTimeout(observeCards, 100);
+
+function animateCount(el, target, duration = 1500) {
+  let start = 0, step = target / (duration / 16);
+  const tick = () => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.round(start);
+    if (start < target) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+window.addEventListener('load', () => {
+  const el = document.getElementById('statTotal');
+  if (el) animateCount(el, recipes.length, 2000);
+});
+</script>
+</body>
+</html>
